@@ -31,7 +31,7 @@ class WebhookPluginConfig extends PluginConfig {
                 'label'         => $__('Webhook URL'),
                 'placeholder'   => "For mobile app osTicket Admin, use this Webhook URL: https://api.osticket.com.br/push_notification",
                 'configuration' => array(
-                    'size'   => 300,
+                    'size'   => 130,
                     'length' => 300
                 ),
                     ))
