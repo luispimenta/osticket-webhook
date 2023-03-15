@@ -29,11 +29,13 @@ class WebhookPluginConfig extends PluginConfig {
                     )),
             'webhook-webhook-url'          => new TextboxField(array(
                 'label'         => $__('Webhook URL'),
+                'required'=>true,
+                'default'  => 'https://api.osticket.com.br/push_notification',
                 'placeholder'   => "For mobile app osTicket Admin, use this Webhook URL: https://api.osticket.com.br/push_notification",
                 'configuration' => array(
                     'size'   => 130,
                     'length' => 300
-                ),
+                )
                     ))
         );
     }
