@@ -11,6 +11,28 @@ require_once('config.php');
 class WebhookPlugin extends Plugin {
 
     var $config_class = "WebhookPluginConfig";
+    //we use this to save the correct config in the bootstrap method
+    //and override the buggy getConfig() from osticket
+    static $_correctConfig = null;
+
+    /**
+     * We override the getConfig method, because on
+     * OsTicket 1.7.5 (at least) the getConfig does only
+     * return the correct config in the bootstrap method.
+     * On all other occasions, it will return the default
+     * config.
+     * @param PluginInstance|null $instance
+     * @param $defaults
+     * @return mixed|null
+     */
+    public function getConfig(PluginInstance $instance = null, $defaults = [])
+    {
+        if (self::$_correctConfig) {
+            return self::$_correctConfig;
+        }
+        return parent::getConfig($instance, $defaults);
+    }
+
 
     /**
      * The entrypoint of the plugin, keep short, always runs.
@@ -18,6 +40,9 @@ class WebhookPlugin extends Plugin {
     function bootstrap() {
         Signal::connect('ticket.created', array($this, 'onTicketCreated'));
         Signal::connect('threadentry.created', array($this, 'onTicketUpdated'));
+        //fix: save correct config, which works only here in bootstrap
+
+        self::$_correctConfig = $this->getConfig();
     }
 
     /**
