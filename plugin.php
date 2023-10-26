@@ -1,11 +1,11 @@
 <?php
 
 return array(
-    'id'          => 'osticket:webhook',
-    'version'     => '1.1',
-    'name'        => 'Webhook Push Notification',
-    'author'      => 'Luis Pimenta',
-    'description' => 'Notify Webhook on new ticket on osTicket mobile app.',
-    'url'         => 'https://github.com/luispimenta/osticket-webhook',
-    'plugin'      => 'webhook.php:WebhookPlugin',
+    'id'          => 'osticket:trello',
+    'version'     => '0.1',
+    'name'        => 'Trello Integration',
+    'author'      => 'Facundo Cerezo',
+    'description' => 'Trello Integration based on osticket-webhook by Luis Pimienta.',
+    'url'         => 'https://github.com/FacundoCerezo/osticket-trello-integration',
+    'plugin'      => 'trello.php:TrelloPlugin',
 );

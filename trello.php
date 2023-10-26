@@ -8,9 +8,9 @@ require_once(INCLUDE_DIR . 'class.config.php');
 require_once(INCLUDE_DIR . 'class.format.php');
 require_once('config.php');
 
-class WebhookPlugin extends Plugin {
+class TrelloPlugin extends Plugin {
 
-    var $config_class = "WebhookPluginConfig";
+    var $config_class = "TrelloPluginConfig";
     //we use this to save the correct config in the bootstrap method
     //and override the buggy getConfig() from osticket
     static $_correctConfig = null;
@@ -94,30 +94,39 @@ class WebhookPlugin extends Plugin {
     function sendToWebhook(Ticket $ticket, $status) {
         global $ost, $cfg;
         if (!$ost instanceof osTicket || !$cfg instanceof OsticketConfig) {
-            error_log("Webhook plugin called too early.");
+            error_log("Trello plugin called too early.");
             return;
         }
         $url = $this->getConfig()->get('webhook-webhook-url');
-        if (!$url) {
-            $ost->logError('Webhook Plugin not configured', 'You need to read the Readme and configure a webhook URL before using this.');
+        $apikey = $this->getConfig()->get('trello-api-key');
+        $token = $this->getConfig()->get('trello-api-token');
+        $listid = $this->getConfig()->get('trello-list-id');
+
+        if (!$url || !$apikey || !$token || !$listid) {
+            $ost->logError('Trello Integration', 'Your configuration in Trello Integration may need changes.');
         }
 
         // Build the payload with the formatted data:
         $staff = $ticket->getStaff();
+        $urlsrc = $ost->getConfig()->getUrl()."scp/tickets.php?id=".$ticket->getId();
+
         $payload['body'] = [
-            'staff'       => $staff ? $staff->getUsername() : "",
-            'title'       => $ticket->getSubject(),
-            'number'      => $ticket->getNumber(),
-            'status'      => $status,
-            'url'         => $cfg->getUrl()
+            //'staff'       => $staff ? $staff->getUsername() : "",
+            'name'       => "T: ".$ticket->getNumber() ." - ". $ticket->getSubject(),
+            //'number'      => $ticket->getNumber(),
+            'desc'      => $ticket->getSubject(). "\n".$ticket->getName(),
+            'urlSource'         => $urlsrc,
+            'pos' => 'top'
         ];
+
+        $callurl = "https://api.trello.com/1/cards?listId=".$listid."&key=".$apikey."&token=".$token;
 
         // Format the payload:
         $data_string = utf8_encode(json_encode($payload));
 
         try {
             // Setup curl
-            $ch = curl_init($url);
+            $ch = curl_init($callurl);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -125,6 +134,8 @@ class WebhookPlugin extends Plugin {
                 'Content-Type: application/json',
                 'Content-Length: ' . strlen($data_string))
             );
+
+            $desc = "";
 
             // Actually send the payload to webhook:
             if (curl_exec($ch) === false) {
@@ -139,7 +150,7 @@ class WebhookPlugin extends Plugin {
                 }
             }
         } catch (\Exception $e) {
-            $ost->logError('Webhook posting issue!', $e->getMessage(), true);
+            $ost->logError('Trello Integration', $e->getMessage(), true);
             error_log('Error posting to Webhook. ' . $e->getMessage());
         } finally {
             curl_close($ch);

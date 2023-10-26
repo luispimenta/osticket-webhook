@@ -2,7 +2,7 @@
 
 require_once INCLUDE_DIR . 'class.plugin.php';
 
-class WebhookPluginConfig extends PluginConfig {
+class TrelloPluginConfig extends PluginConfig {
 
     // Provide compatibility function for versions of osTicket prior to
     // translation support (v1.9.4)
@@ -30,13 +30,63 @@ class WebhookPluginConfig extends PluginConfig {
             'webhook-webhook-url'          => new TextboxField(array(
                 'label'         => $__('Webhook URL'),
                 'required'=>true,
-                'default'  => 'https://api.osticket.com.br/push_notification',
+                'default'  => 'https://api.trello.com/1/cards',
                 'placeholder'   => "For mobile app osTicket Admin, use this Webhook URL: https://api.osticket.com.br/push_notification",
                 'configuration' => array(
                     'size'   => 130,
                     'length' => 300
                 )
-                    ))
+                    )),
+            'trello-api-key'          => new TextboxField(array(
+                'label'         => $__('Trello API Key'),
+                'required'=>false,
+                'default'  => '',
+                'placeholder'   => "Set Trello API Key",
+                'configuration' => array(
+                    'size'   => 130,
+                    'length' => 300
+                )
+            )),
+            'trello-api-token'          => new TextboxField(array(
+                'label'         => $__('Trello API Token'),
+                'required'=>false,
+                'default'  => '',
+                'placeholder'   => "Set Trello API Token",
+                'configuration' => array(
+                    'size'   => 130,
+                    'length' => 300
+                )
+            )),
+            'trello-workspace'          => new TextboxField(array(
+                'label'         => $__('Trello Workspace Name'),
+                'required'=>false,
+                'default'  => '',
+                'placeholder'   => "Set Trello Workspace ID",
+                'configuration' => array(
+                    'size'   => 130,
+                    'length' => 300
+                )
+            )),
+            'trello-board'          => new TextboxField(array(
+                'label'         => $__('Trello Board'),
+                'required'=>false,
+                'default'  => '',
+                'placeholder'   => "Set Trello Board",
+                'configuration' => array(
+                    'size'   => 130,
+                    'length' => 300
+                )
+            )),
+            'trello-list-id'          => new TextboxField(array(
+                'label'         => $__('Trello List ID'),
+                'required'=>false,
+                'default'  => '652834f49a0e74517d6abf87',
+                'placeholder'   => "Set Trello List ID",
+                'configuration' => array(
+                    'size'   => 130,
+                    'length' => 300
+                )
+            ))
         );
     }
 
